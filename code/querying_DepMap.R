@@ -24,3 +24,18 @@ df_res <- df_cr_selected %>%
   select(ModelID, StrippedCellLineName, everything())
 
 write.csv(df_res, file = "../data/shSHOC2_crispr_off-target_gene_effect.csv", row.names = F)
+
+
+## script below to query expressionTPM data from depmap, select a particular sample, and convert it into format that can be run by pdac classification app
+tmp <- read.csv("~/Downloads/OmicsExpressionProteinCodingGenesTPMLogp1 (1).csv")
+
+dat_tmp <- as.data.frame(tmp) %>% filter(SampleID == "ACH-000094")
+
+df_long <- dat_tmp %>%
+  pivot_longer(
+    cols = -SampleID,  # Exclude SampleID from pivoting
+    names_to = "Hugo_Symbol",  # New column for gene names
+    alues_to = unique(dat_tmp$SampleID)  # Use SampleID as value column
+  )
+
+writexl::write_xlsx(df_long, "~/Downloads/HPAF-II.xlsx")
